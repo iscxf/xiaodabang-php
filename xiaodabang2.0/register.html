@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://localhost:8080/xiaodabang2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="http://localhost:8080/xiaodabang2.0/css/font-awesome.min.css">
+	<script src="http://localhost:8080/xiaodabang2.0/js/jquery.min.js"></script>
+	<script src="http://localhost:8080/xiaodabang2.0/js/bootstrap.bundle.min.js"></script>
+	<script src="http://localhost:8080/xiaodabang2.0/js/bootstrap.min.js"></script>
+</head>
+<style type="text/css">
+*{font-family:"微软雅黑","黑体","宋体";color:#333;}
+a{color:#069;}
+body{margin:0;padding:0;background-image:url(images/background1.jpg)}
+.content{}
+.form_top{min-height: 5em;background-color: #fff;border-radius: 10px 10px 0 0;}
+.form_div{background-color: #eee;border-radius: 0 0 10px 10px;padding-bottom: 15px;}
+.line{margin:0 5% 2% 5%;}
+#line_name{padding-top: 20px;}
+.info label{font-size:1.2em;line-height:2em;color:#333;padding:0;}
+.info span{font-size:0.5em;line-height:2em;color:#666;}
+.input input{font-size:1.2em;line-height:3em;margin-top:2%; height:2.5em; padding:1em 0 1em 1em;border-radius:10px;}
+.error,.corect{height:1em;position:absolute;top:1.5em;right:5%;background: no-repeat 0 -20px;}
+.error span{display:block;position:absolute;top:3em;right:5%;background:#fcc;border:1px solid #f33;font-size:12px;line-height:1.2em;color:#600;padding:6px 10px 4px 10px;border-radius:5px;opacity:.8;white-space:nowrap;overflow:hidden;}
+.corect{background-position:0 0;}
+.corect span{display:none;}
+.none{display:none;}
+</style>
+<body>
+	<div class="container text-center text-white" style="margin-top: 50px ;margin-bottom: 30px">
+		<h2>用户注册</h2>
+	</div>
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-md-8">
+				<div class="form_top text-center">
+					<img src="images/xiaodabang_logo.png" style="margin-top: 1em">
+				</div>
+				<div class="form_div">
+					<form method="post" action="register_post.php" onsubmit="adaptValue();">
+						<div class="form-group row line" id="line_name">
+							<div class="info col-sm-2 text-center">
+								<label for="name" class="col-form-label">用户名</label></br>
+								<span class="tips">最多32个字符</span>
+							</div>
+							<div class="col-sm-10 input">
+								<input class="form-control" type="text" name="name" id="name" onblur="v_name();" onkeyup="v_name();" >
+								<div class="none"><span></span></div>
+							</div>
+						</div>
+						<div class="form-group row line" id="line_password">
+							<div class="info col-sm-2 text-center">
+								<label for="password" class="col-form-label">密码</label></br>
+								<span class="tips">6至16个字符</span>
+							</div>
+							<div class="col-sm-10 input">
+								<input class="form-control" type="password" name="password" id="password" onblur="v_password();" onkeyup="v_password();"  >
+								<div class="none"><span></span></div>
+							</div>
+						</div>
+						<div class="form-group row line" id="line_repeat">
+							<div class="info col-sm-2 text-center">
+								<label for="repeat" class="col-form-label">确认密码</label></br>
+								<span class="tips">再次输入密码</span>
+							</div>
+							<div class="col-sm-10 input">
+								<input class="form-control" type="password" name="repeat" id="repeat" onblur="v_repeat();" onkeyup="v_repeat();"  >
+								<div class="none"><span></span></div>
+							</div>
+						</div>
+						<fieldset class="form-group">
+							<div class="row line" id="line_sex">
+								<div class="info col-sm-2 text-center">
+									<label for="repeat" class="col-form-label">性别</label></br>
+									<span class="tips">单选或不选</span>
+								</div>
+								<div class="col-sm-10">
+									<div class="form-check">
+										<input class="form-check-input" type="radio" name="sex" id="sex_1" value="1">
+										<label class="form-check-label" for="sex_1">
+											男生
+										</label>
+									</div>
+									<div class="form-check">
+										<input class="form-check-input" type="radio" name="sex" id="sex_2" value="2">
+										<label class="form-check-label" for="sex_2">
+											女生
+										</label>
+									</div>
+								</div>
+							</div>
+						</fieldset>
+						<div class="form-group row" >
+							<div class="col-sm-12 text-center">
+								<button type="submit" class="btn btn-primary" id="submit" disabled="disabled"/>完成注册</button>
+								<div>已经拥有账号，<a href="index.php">直接登录</a></div>
+								<div>忘记密码，<a href="#" onclick="alert('打电话给我就是')">请联系管理员</a></div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+
+<script type="text/javascript">
+
+
+	function enableSubmit(bool){
+		if(bool)$("#submit").removeAttr("disabled");
+		else $("#submit").attr("disabled","disabled");
+	}
+
+	function v_submitbutton(){
+		for(var f in flags) if(!flags[f]) {
+			enableSubmit(false); 
+			return;
+		}
+		enableSubmit(true);
+	}
+
+
+	var flags = [false,false,false];
+
+	function lineState(name,state,msg){
+		if(state=="none"){$("#line_"+name+" .input div").attr("class","none"); return;}
+		if(state=="corect"){$("#line_"+name+" .input div").attr("class","corect");return;}
+		$("#line_"+name+" .input span").text(msg);
+		$("#line_"+name+" .input div").attr("class","error");
+	}
+
+	$('#name').blur(function () {  
+	    var name = $("#name").val();
+				$.ajax({
+		    		url: 'register_post.php',
+		    		type: 'post',
+		    		dataType: 'text',
+		    		data: {case:'name',name:name},
+		    		error : function(XMLHttpRequest, textStatus, errorThrown) {//这个error函数调试时非常有用，如果解析不正确，将会弹出错误框
+			　　　　alert(XMLHttpRequest.responseText); 
+					alert(XMLHttpRequest.status);
+					alert(XMLHttpRequest.readyState);
+					alert(textStatus); // parser error;
+					},
+		    		success:name_ajax
+		    	});
+
+		    	function name_ajax(text){
+					if(text=='no'){
+						lineState("name","error","此用户名已存在！"); 
+						flags[0]=false;
+					}
+				} 
+	});  
+	function v_name(){
+    var name = $("#name").val();
+    if(name.length==0) {
+        lineState("name","error","不得为空"); 
+        flags[0]=false;
+    }else{
+        if(name.length>16) {
+            lineState("name","error","必须少于16个字符"); 
+            flags[0]=false;
+        }else{
+            lineState("name","corect",""); 
+            flags[0] = true;
+        }
+    }
+    v_submitbutton();
+}
+
+	function v_password(){
+		var password = $("#password").val();
+		if(password.length<6) {
+			lineState("password","error","必须多于或等于6个字符"); 
+			flags[1]=false;
+		}else{
+			if(password.length>16){
+				lineState("password","error","必须少于或等于16个字符"); 
+				flags[1]=false;
+			}else{
+				lineState("password","corect","");
+				flags[1] = true;
+			}
+		}
+		v_repeat();
+		v_submitbutton();
+	}
+
+	function v_repeat(){
+		if(!flags[1]) {
+			lineState("repeat","none",""); 
+			return;
+		}
+		if($("#password").val()!=$("#repeat").val()) {
+			lineState("repeat","error","密码不一致"); 
+			flags[2]=false;
+		}else{
+			lineState("repeat","corect","");
+			flags[2] = true;
+		}
+		v_submitbutton();
+	}
+
+	function adaptValue(){
+		return true;
+	}
+</script>
